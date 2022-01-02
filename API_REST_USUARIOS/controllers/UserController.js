@@ -28,6 +28,10 @@ class UserController{
             res.json({err: "O nome é inválido"});
             return;
 
+        }else if( password == undefined || password == " " || password == ""){
+            res.status(400);
+            res.json({err: "A senha é obrigatória"});
+            return;
         }else{
             try {
 
@@ -43,7 +47,7 @@ class UserController{
 
                 res.status(200);
                 // console.log(req.body);
-                 res.send("Tudo OK!");
+                res.send("Tudo OK!");
 
             } catch (error) {
                 console.log(error);
@@ -95,6 +99,22 @@ class UserController{
             res.send(result.err)
         }
             
+    }
+
+    async remove(req, res){
+        
+        var id = req.params.id;
+
+        var result = await User.delete(id);
+
+        if(result==true){
+            res.status(200);
+            res.send("Usuário deletado");
+        }else{
+            res.status(406);
+            res.send(result.err);
+        }
+        
     }
 }
 

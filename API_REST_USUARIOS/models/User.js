@@ -73,7 +73,7 @@ class User {
                 if(email != undefined){
 
                     if(email != user.email){
-                        
+
                         var result = await this.findEmail(email);
 
                         if(result == false){
@@ -106,6 +106,23 @@ class User {
             }else{
                 return {status: false, err:"Usuário não existe !"};
             }
+    }
+
+    async delete(id){
+
+        var result = await this.findById(id);
+
+        if(result != undefined){
+            try {
+                await knex.delete().from("users").where({id: id});
+                return {status: true, err:"Usuário deletado"};
+            } catch (error) {
+                return {status: false, err: "Erro ao deletar usuário"};
+            }
+        }else{
+            return {status: false, err:"Usuário não existe"};
+        }
+
     }
 
 }

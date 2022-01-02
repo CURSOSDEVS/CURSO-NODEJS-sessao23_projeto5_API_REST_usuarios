@@ -19,5 +19,8 @@ router.get('/user/:id', UserController.findUser);
 //rota para alterar um usuário
 router.put('/user', UserController.edit);
 
+//rota para deletar um usuário
+router.delete("/user/:id", UserController.remove);
+
 
 module.exports = router;
