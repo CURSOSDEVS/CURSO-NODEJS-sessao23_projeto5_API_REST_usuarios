@@ -2,7 +2,12 @@ var User = require("../models/User");
 
 class UserController{
 
-    async index(req,res){}
+    async index(req,res){
+
+        var users = await User.findAll();
+        res.json(users);
+
+    }
 
     async create(req, res){
 
@@ -44,6 +49,52 @@ class UserController{
                 console.log(error);
             }       
         }   
+    }
+
+    async findUser(req, res){
+
+        //id está sendo passado na requisição pelo usuário
+        var id = req.params.id;
+
+        //verifica se o id passado é um número
+        if(isNaN(id) || id == " "){
+            res.status(406);
+            res.json({err:"Id não definido !"});
+            return;
+        }else{
+
+            var userId = await User.findById(id);
+
+            if(userId == undefined){
+                res.status(404);
+                res.json({err: "Usuário não localizado !"});
+            }else{
+            res.status(200);
+            res.json(userId);
+            }
+        }
+
+    }
+
+    async edit(req, res){
+        var {id, name, email, role} = req.body;
+
+        var result = await User.update(id,name,email,role);
+
+        if(result != undefined){
+            if(result.status == true){
+                res.status(200);
+                res.send("Usuário atualizado!");
+            }else{
+                res.status(400);
+                res.send(result.err)
+            }
+
+        }else{
+            res.status(400);
+            res.send(result.err)
+        }
+            
     }
 }
 
