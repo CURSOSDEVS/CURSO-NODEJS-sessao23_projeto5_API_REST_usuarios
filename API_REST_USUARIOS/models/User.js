@@ -2,6 +2,7 @@ var Knex = require("../database/connection");
 var bcrypt = require("bcrypt");
 const knex = require("../database/connection");
 
+
 class User {
 
     async new(email,name,password){
@@ -125,6 +126,20 @@ class User {
 
     }
 
+    async findByEmail(email){
+        try {
+
+            var user = await Knex.select(["id","name","email","role"]).from("users").where({email: email});
+           
+            if(user.length >= 0){
+                return user[0];
+            }else{
+                return {status: false, err:"Verifique o email informado"};
+            }
+        } catch (error) {
+            return{status: false, err:"Erro no Knex findbyemail: "+error};
+        }
+    }
 }
 
 module.exports = new User();

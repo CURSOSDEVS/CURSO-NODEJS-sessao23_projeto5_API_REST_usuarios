@@ -1,4 +1,5 @@
 var User = require("../models/User");
+var PasswordToken = require("../models/PasswordToken");
 
 class UserController{
 
@@ -68,13 +69,17 @@ class UserController{
         }else{
 
             var userId = await User.findById(id);
+            
+            //testando a geração do código uuid
+            //var cod = await PasswordToken.codeUuid();
 
             if(userId == undefined){
                 res.status(404);
                 res.json({err: "Usuário não localizado !"});
             }else{
             res.status(200);
-            res.json(userId);
+           // res.json({user: userId, uuid: cod});
+            res.json({user: userId});
             }
         }
 
@@ -115,6 +120,22 @@ class UserController{
             res.send(result.err);
         }
         
+    }
+
+    async recoverPassword(req, res){
+        var email = req.body.email;
+
+        var results = await PasswordToken.create(email);
+
+        if(results.status){
+            //será enviado o email aqui
+            res.status(200);
+            res.send({msg:"Link para alteração de senha enviado para o email informado"});
+        }else{
+            res.status(406);
+            res.send({erro: "Erro no recoverPassword: " + results.err});
+        }
+
     }
 }
 

@@ -22,5 +22,7 @@ router.put('/user', UserController.edit);
 //rota para deletar um usuário
 router.delete("/user/:id", UserController.remove);
 
+//rota para recuperação de senha
+router.post('/recoverpassword', UserController.recoverPassword);
 
 module.exports = router;
