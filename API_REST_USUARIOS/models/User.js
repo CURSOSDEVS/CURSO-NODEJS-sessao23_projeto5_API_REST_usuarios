@@ -1,13 +1,25 @@
 var Knex = require("../database/connection");
 var bcrypt = require("bcrypt");
 const knex = require("../database/connection");
+var PasswordToken = require("./PasswordToken");
 
 
 class User {
 
+    async hashPassword(password){
+        try {
+            var cryptPassord = await bcrypt.hash(password,10);
+            return {status: true, password: cryptPassord};
+        } catch (error) {
+            return {status: false, err:"hasPassword: "+ error};
+        }
+    }
+
     async new(email,name,password){
         try {
-            var hash = await bcrypt.hash(password,10);
+
+            //var hash = await bcrypt.hash(password,10);
+            var hash = await this.hashPassword(password);
 
             await Knex.insert({email, name, password: hash, role: 0}).table('users');
 
@@ -47,11 +59,11 @@ class User {
 
     async findById(id){
         try {
-            var results = await Knex.select(["id","name","email","role"]).from("users").where({id: id});
+            var user = await Knex.select(["id","name","email","role"]).from("users").where({id: id});
 
             //tratando o retorno
-            if(results.length > 0){
-                return results[0];
+            if(user.length > 0){
+                return  {status:true, user: user[0]};
             }else{
                 return undefined;
             }
@@ -139,6 +151,37 @@ class User {
         } catch (error) {
             return{status: false, err:"Erro no Knex findbyemail: "+error};
         }
+    }
+
+    async updatePassword(token,newPassword){
+        
+        var validToken;
+
+        try {
+            //verificando se o token é válido
+            validToken = await PasswordToken.validate(token);
+            
+            if(validToken.status){
+
+                //passando o usuário para acessarmos o atributo user_id
+                var tokenUser = validToken.user;
+
+                //criptografando a nova senha do usuário
+                var cryptPassword = await this.hashPassword(newPassword);
+
+                await Knex.update({password: cryptPassword.password}).from('users').where({id: tokenUser.id});
+                await PasswordToken.updateStatusToken(validToken.user);
+                
+                return {status: true};
+
+            }else{
+                return {status: false, err: validToken.err};
+            }
+        
+        } catch (error) {
+            return {status: false, err:"updatePassword: "+ error};
+        }
+
     }
 }
 

@@ -25,4 +25,7 @@ router.delete("/user/:id", UserController.remove);
 //rota para recuperação de senha
 router.post('/recoverpassword', UserController.recoverPassword);
 
+//rota para alterar a senha do usuário
+router.put('/changepassword', UserController.changePassword)
+
 module.exports = router;

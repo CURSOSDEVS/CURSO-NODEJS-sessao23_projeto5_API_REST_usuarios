@@ -137,6 +137,29 @@ class UserController{
         }
 
     }
+
+    async changePassword(req, res){
+        
+        var {token, newPassword} = req.body;
+
+        var result = await User.updatePassword(token,newPassword);
+
+        if(result != undefined){
+            if(result.status == true){
+                res.status(200);
+                res.send("Senha atualizada!");
+            }else{
+                res.status(400);
+                res.send(result.err)
+            }
+
+        }else{
+            res.status(406);
+            res.send(result.err)
+        }
+        
+
+    }
 }
 
 module.exports = new UserController();

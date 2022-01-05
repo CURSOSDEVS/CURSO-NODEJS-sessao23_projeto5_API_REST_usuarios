@@ -2,8 +2,8 @@
 const { v4: uuidv4 } = require('uuid');
 var User = require("./User");
 var Knex = require("../database/connection");
-var User = require('./User');
-const { json } = require('body-parser');
+//const { json } = require('body-parser');
+//const { update } = require('../database/connection');
 
 class PasswordToken{
 
@@ -35,6 +35,43 @@ class PasswordToken{
             return {err: "Erro: Verifique o email informado"};
         }
     }
+
+    async validate(token){
+        
+        try {
+            var userToken = await Knex.select().from('passwordtokens').where({tokens: token});
+
+            if(userToken.length > 0){
+                
+                var tk = userToken[0];
+
+                 if(tk.used == 1){
+                    return {status: false, err: "Token já utilizado"}
+                 }else{
+                     return {status: true, user: userToken[0]};
+                 }
+            }else{
+                return {status: false, err: "Token não existe"}
+            }
+        } catch (error) {
+            return {status: false, err: "Erro knex validade: "+ error};
+        }
+         
+    }
+
+    async updateStatusToken(userToken){
+        
+        try {
+
+            var tk = userToken;
+
+            await Knex.update({used: 1}).from('passwordtokens').where({id: tk.id});                    
+            return {status: true};
+            
+        } catch (error) {
+            return {status: false, err:"updateStatusToken  - "+ error};
+        }
+    } 
 
 }
 
