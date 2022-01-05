@@ -1,12 +1,18 @@
-//rota para carregar todos os usuário
-GET http://localhost:8686/user
 
+//variáveis de configuração
+@apiurl = http://localhost:8686
+
+###
+//rota para carregar todos os usuário
+GET {{apiurl}}/user
+Authorization: token xxxxx
 
 ####
 
 //rota para criacção de novo usuário
-POST http://localhost:8686/user
+POST {{apiurl}}/user
 Content-Type: application/json
+Authorization: token xxxxx
 
 {
     "name" : "Caroline",
@@ -17,22 +23,38 @@ Content-Type: application/json
 }
 
 ###
-//rota para login do usuário
-POST http://localhost:8686/login 
+
+//rota para editar os dados de um usuário
+ // incluir no json somente os campos que serão alterados var {id, name, email, role} = req.body;
+PUT {{apiurl}}/user
+Content-Type: application/json
+Authorization: token xxxxx
+
+{
+    "id": 3,
+    "name": "Sthefany S.F. alves",
+    "password":"aaaabbbb",
+    "role": 1
+}
+
+
+###
+//rota para login do usuário admin
+POST {{apiurl}}/login 
 Content-Type: application/json
 
 {
-    "email" : "sth@a" ,
+    "email" : "pedro@a" ,
     "password" : "1234"
 }
 
 ###
 //rota para auteração da senha
-PUT http://localhost:8686/changepassword
+PUT {{apiurl}}/changepassword
 Content-Type: application/json
 
 {
-    "token" : "8933f097-b4b2-4a32-8925-0f719a78f8c8" ,
+    "token" : "11a13626-dceb-40d8-a595-7fd76c9d6c6c" ,
     "newPassword" : "1234"
 }
 
