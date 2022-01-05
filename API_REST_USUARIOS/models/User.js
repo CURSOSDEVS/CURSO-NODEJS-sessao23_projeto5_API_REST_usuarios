@@ -7,12 +7,43 @@ var PasswordToken = require("./PasswordToken");
 class User {
 
     async hashPassword(password){
+
+        //exemplo retirado para pagina da hcode
+        //examinando o hash de 2^10 até 2^20
+        //for (let saltRounds = 10; saltRounds <= 15; saltRounds++) { 
+          /*  bcrypt.hash(pass, saltRounds)
+                .then((passHashed)=> {
+                    console.time(`Time: ${saltRounds}`);
+                    console.log(passHashed);
+                    console.timeEnd(`Time: ${saltRounds}`);
+                });
+        }*/
+
         try {
+
             var cryptPassord = await bcrypt.hash(password,10);
             return {status: true, password: cryptPassord};
         } catch (error) {
             return {status: false, err:"hasPassword: "+ error};
         }
+    }
+
+    async comparePassword(password, user){
+
+        try {
+          
+            var truePassword = await  bcrypt.compare(password, user.password);
+           
+            if(truePassword==true){
+                return {status:true};
+            }else{
+                return {status:false, err:"Senha inválida"};
+            }
+
+        } catch (error) {
+            return {status: false, err:"comparePassword: "+ error};
+        }
+        
     }
 
     async new(email,name,password){
@@ -21,7 +52,7 @@ class User {
             //var hash = await bcrypt.hash(password,10);
             var hash = await this.hashPassword(password);
 
-            await Knex.insert({email, name, password: hash, role: 0}).table('users');
+            await Knex.insert({email, name, password: hash.password, role: 0}).table('users');
 
         } catch (error) {
             console.log(error);
@@ -141,7 +172,7 @@ class User {
     async findByEmail(email){
         try {
 
-            var user = await Knex.select(["id","name","email","role"]).from("users").where({email: email});
+            var user = await Knex.select(["id","name","email","password","role"]).from("users").where({email: email});
            
             if(user.length >= 0){
                 return user[0];
@@ -169,11 +200,15 @@ class User {
                 //criptografando a nova senha do usuário
                 var cryptPassword = await this.hashPassword(newPassword);
 
-                await Knex.update({password: cryptPassword.password}).from('users').where({id: tokenUser.id});
-                await PasswordToken.updateStatusToken(validToken.user);
-                
-                return {status: true};
+                var isUpdatePassword = await Knex.update({password: cryptPassword.password}).from('users').where({id: tokenUser.user_id});
 
+                if(isUpdatePassword){
+                    await PasswordToken.updateStatusToken(validToken.user);
+                    return {status: true, err: "Senha e status atualizados"};                    
+                }else{
+                    return {status: false, err: "Erro ao salvar senha no banco de dados - "+isUpdatePassword};
+                }
+                
             }else{
                 return {status: false, err: validToken.err};
             }

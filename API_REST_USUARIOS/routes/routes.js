@@ -28,4 +28,7 @@ router.post('/recoverpassword', UserController.recoverPassword);
 //rota para alterar a senha do usuário
 router.put('/changepassword', UserController.changePassword)
 
+//rota para login
+router.post('/login', UserController.login);
+
 module.exports = router;

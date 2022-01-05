@@ -1,0 +1,39 @@
+//rota para carregar todos os usuário
+GET http://localhost:8686/user
+
+
+####
+
+//rota para criacção de novo usuário
+POST http://localhost:8686/user
+Content-Type: application/json
+
+{
+    "name" : "Caroline",
+    "email" : "carol@teste",
+    "password" : "carol",
+    "role" : 0
+
+}
+
+###
+//rota para login do usuário
+POST http://localhost:8686/login 
+Content-Type: application/json
+
+{
+    "email" : "sth@a" ,
+    "password" : "1234"
+}
+
+###
+//rota para auteração da senha
+PUT http://localhost:8686/changepassword
+Content-Type: application/json
+
+{
+    "token" : "8933f097-b4b2-4a32-8925-0f719a78f8c8" ,
+    "newPassword" : "1234"
+}
+
+####

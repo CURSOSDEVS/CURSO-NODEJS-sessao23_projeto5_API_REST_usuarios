@@ -1,5 +1,8 @@
 var User = require("../models/User");
 var PasswordToken = require("../models/PasswordToken");
+var jwt = require("jsonwebtoken");
+//chave de criptografia do token
+var secret = "@@#$@¨5###@kdkdkaee)98&!111!!'!2233<.JH";
 
 class UserController{
 
@@ -147,7 +150,7 @@ class UserController{
         if(result != undefined){
             if(result.status == true){
                 res.status(200);
-                res.send("Senha atualizada!");
+                res.send(result.err);
             }else{
                 res.status(400);
                 res.send(result.err)
@@ -158,6 +161,39 @@ class UserController{
             res.send(result.err)
         }
         
+
+    }
+
+    async login(req, res){
+
+        var {email, password} = req.body;
+
+        var user = await User.findByEmail(email);
+
+        if(user != undefined){
+
+            var isCorrectPassword = await User.comparePassword(password, user);
+
+           // console.log("iscorretPassword:"+isCorrectPassword.status);
+            
+            if(isCorrectPassword.status){
+                //GERANDO O TOKEN DE AUTENTICAÇÃO COM JWT
+
+                var tokenJwt = jwt.sign({email: user.email, role: user.role}, secret);
+
+                res.json({tokenJwt: tokenJwt});
+                
+                res.status(200);
+                //res.send("Usuário Logado");
+            }else{
+                res.status(406);
+                res.send({err: isCorrectPassword.err});
+            }
+            
+        }else{
+            res.status(404);
+            res.send("Usuário não encontrado");
+        }
 
     }
 }
