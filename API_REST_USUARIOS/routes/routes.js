@@ -32,4 +32,7 @@ router.put('/changepassword', UserController.changePassword)
 //rota para login
 router.post('/login', UserController.login);
 
+//rota para teste de envio de email
+router.get('/envioemail', UserController.sendEmail)
+
 module.exports = router;

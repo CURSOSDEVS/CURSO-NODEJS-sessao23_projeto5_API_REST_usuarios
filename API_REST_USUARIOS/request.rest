@@ -5,7 +5,7 @@
 ###
 //rota para carregar todos os usuário
 GET {{apiurl}}/user
-Authorization: token xxxxx
+Authorization: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InN0aEBhIiwicm9sZSI6MSwiaWF0IjoxNjQxNDc3MzM5fQ.FR_MwqGbE8CcVbD6rGrgL2R9FwBzhA-x41WGnKhPKsE
 
 ####
 
@@ -44,7 +44,7 @@ POST {{apiurl}}/login
 Content-Type: application/json
 
 {
-    "email" : "pedro@a" ,
+    "email" : "sth@a" ,
     "password" : "1234"
 }
 
@@ -59,3 +59,13 @@ Content-Type: application/json
 }
 
 ####
+
+//rota para enviar um email
+GET  {{apiurl}}/envioemail
+Content-Type: application/json
+
+{
+    "name": "Claudisnei Bello Alves",
+    "email":"claudisneibello@gmail.com",
+    "mensage": "Configurando e enviando um email utilizando o node email, para recuperação de senha"
+}

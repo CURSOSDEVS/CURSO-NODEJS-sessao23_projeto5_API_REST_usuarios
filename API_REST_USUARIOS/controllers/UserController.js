@@ -4,6 +4,9 @@ var jwt = require("jsonwebtoken");
 //chave de criptografia do token
 var secret = "@@#$@¨5###@kdkdkaee)98&!111!!'!2233<.JH";
 
+const SMTP_CONFIG = require('../config/smtp');
+const mailer = require("nodemailer");
+
 class UserController{
 
     async index(req,res){
@@ -196,6 +199,41 @@ class UserController{
         }
 
     }
-}
 
+    async sendEmail(req, res){
+        var { name, email, mensage } = req.body;
+     
+        
+        let transporter = mailer.createTransport({
+            host: SMTP_CONFIG.host,
+            port: SMTP_CONFIG.port,
+            secure: false,
+            auth: {
+                user: SMTP_CONFIG.user,
+                pass: SMTP_CONFIG.pass,
+            },
+            tls: {
+                rejectUnauthorized: false,
+            },
+        });
+
+            transporter.sendMail({        
+                from: 'Claudisnei <testdevclaudisnei@gmail.com>',
+                to: email,
+                subject: name+' Assundo do e-mail',
+                text: mensage,
+                html: "Olá eu acho o nodemail legal<a href=https://guiadoprogramador.com> Nodemailer</a>"
+            }).then(message => {
+                transporter.close();
+                res.send(message);
+                console.log(message);
+            }).catch(err => {
+                transporter.close();
+                res.send(err);
+                console.log(err);
+            });
+        
+        
+    }
+}
 module.exports = new UserController();
